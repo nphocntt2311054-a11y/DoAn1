@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang Quản Trị - Online Book</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        /* Thêm một chút style cho tab active */
+        .tab-btn.active {
+            border-bottom-color: #059669; /* emerald-600 */
+            color: #059669;
+        }
+    </style>
+</head>
+<script src="admin.js"></script>
+<body class="bg-gray-100 font-sans">
+
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="trangchu.html">
+                <img src="image/logo.png" alt="Logo BookNè" width="120" height="auto" />
+            </a>
+            <h1 class="text-2xl font-bold text-emerald-600">TRANG QUẢN TRỊ</h1>
+            <a href="index.html" id="logout-btn" class="font-semibold text-gray-700 hover:text-emerald-600">
+                Đăng xuất
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <div class="mb-8 border-b border-gray-300">
+            <nav class="flex -mb-px space-x-8">
+                <button id="tab-books" class="tab-btn active whitespace-nowrap pb-4 px-1 border-b-2 font-semibold text-lg">
+                    Quản lý Sách
+                </button>
+                <button id="tab-users" class="tab-btn whitespace-nowrap pb-4 px-1 border-b-2 font-semibold text-lg text-gray-500 hover:text-gray-700">
+                    Quản lý User
+                </button>
+            </nav>
+        </div>
+
+        <div id="content-books" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Thêm Sách Mới</h2>
+                <form id="add-book-form">
+                    <div class="mb-4">
+                        <label for="title" class="block text-gray-700 font-semibold mb-2">Tên sách</label>
+                        <input type="text" id="title" class="w-full py-2 px-4 border border-gray-300 rounded-lg" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="author" class="block text-gray-700 font-semibold mb-2">Tác giả</label>
+                        <input type="text" id="author" class="w-full py-2 px-4 border border-gray-300 rounded-lg" required />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-2">Danh mục</label>
+    
+                        <select id="category" required 
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-primary focus:border-primary bg-white">
+        
+                            <option value="" disabled selected>-- Chọn danh mục sách --</option>
+        
+                            <option value="Văn học">Văn học</option>
+                            <option value="Kinh tế">Kinh tế</option>
+                            <option value="Tâm lý">Tâm lý & Kỹ năng sống</option>
+                            <option value="Thiếu nhi">Sách thiếu nhi</option>
+                            <option value="Khoa học">Khoa học - Công nghệ</option>
+                            <option value="Nuôi dạy con">Nuôi dạy con</option>
+                            <option value="Ngoại ngữ">Sách Ngoại ngữ/AV</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-2">Vị trí hiển thị ở trang chủ</label>
+                        <select id="book-position"
+                            class="w-full px-4 py-2 border rounded-lg focus:ring-primary focus:border-primary bg-white">
+                            <option value="new">Sản phẩm Mới </option>
+                            <option value="featured">Sản phẩm Nổi bật</option>
+                            <option value="suggested">Gợi ý dành cho bạn</option>
+                            <option value="none">Chỉ hiện trong danh mục (Không hiện trang chủ)</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="price" class="block text-gray-700 font-semibold mb-2">Giá (VNĐ)</label>
+                        <input type="number" id="price" class="w-full py-2 px-4 border border-gray-300 rounded-lg" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="stock" class="block text-gray-700 font-semibold mb-2">Số lượng tồn kho</label>
+                        <input type="number" id="stock" class="w-full py-2 px-4 border border-gray-300 rounded-lg" value="1" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="imageUrl" class="block text-gray-700 font-semibold mb-2">Link hình ảnh (URL)</label>
+                        <input type="text" id="imageUrl" class="w-full py-2 px-4 border border-gray-300 rounded-lg" placeholder="https://..." />
+                    </div>
+                    <div class="mb-4">
+                        <label for="description" class="block text-gray-700 font-semibold mb-2">Mô tả</label>
+                        <textarea id="description" rows="4" class="w-full py-2 px-4 border border-gray-300 rounded-lg"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-emerald-700">
+                        Thêm Sách
+                    </button>
+                    <p id="admin-message" class="text-center mt-4"></p>
+                </form>
+            </div>
+
+            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Sách Hiện Có Trong CSDL</h2>
+                <div id="book-list" class="space-y-4">
+                    <p>Đang tải danh sách sách...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="content-users" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Quản lý User</h2>
+                <p class="text-gray-600">Chức năng này đang được phát triển. Chúng ta sẽ làm nó ở Ngày 6!</p>
