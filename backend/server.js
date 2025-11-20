@@ -72,36 +72,36 @@ app.post('/register', async (req, res) => {
     }
 });
 
+// --- API ĐĂNG NHẬP ---
+
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({ success: false, message: 'Vui lòng nhập đủ tên đăng nhập và mật khẩu.' });
-    }
 
     const sql = 'SELECT * FROM Users WHERE username = ?';
     db.get(sql, [username], async (err, user) => {
-        if (err) {
-            console.error(err.message);
-            return res.status(500).json({ success: false, message: 'Lỗi máy chủ.' });
-        }
-
-        if (!user) {
-            return res.status(400).json({ success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng.' });
-        }
 
         try {
             const match = await bcrypt.compare(password, user.password);
 
             if (match) {
-               
                 req.session.user = {
                     id: user.id,
                     username: user.username,
                     isAdmin: user.isAdmin
                 };
                 console.log('User đã đăng nhập:', req.session.user);
-                res.json({ success: true, message: 'Đăng nhập thành công!' });
+
+                res.json({ 
+                    success: true, 
+                    message: 'Đăng nhập thành công!',
+                    user: {
+                        id: user.id,
+                        username: user.username,
+                        isAdmin: user.isAdmin
+                    }
+                });
+
             } else {
                 res.status(400).json({ success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng.' });
             }
@@ -244,6 +244,75 @@ app.post('/order', (req, res) => {
         }
         // Trả về thành công và mã đơn hàng (this.lastID)
         res.json({ success: true, message: 'Đặt hàng thành công!', orderId: this.lastID });
+    });
+});
+
+// --- 1. API LẤY CÂU HỎI BẢO MẬT ---
+app.get('/get-security-question/:username', (req, res) => {
+    const username = req.params.username;
+    const sql = "SELECT securityQuestion FROM Users WHERE username = ?";
+    
+    db.get(sql, [username], (err, row) => {
+        if (err) return res.status(500).json({ success: false, message: 'Lỗi Server' });
+        
+        if (row) {
+            const question = row.securityQuestion || "Bạn chưa thiết lập câu hỏi bảo mật.";
+            res.json({ success: true, question: question });
+        } else {
+            res.json({ success: false, message: 'Tài khoản không tồn tại!' });
+        }
+    });
+});
+
+// API ĐẶT LẠI MẬT KHẨU 
+app.post('/reset-password', (req, res) => {
+    const { username, answer, newPassword } = req.body;
+
+    const sqlGet = "SELECT * FROM Users WHERE username = ?";
+    db.get(sqlGet, [username], (err, user) => {
+        if (err || !user) return res.json({ success: false, message: 'Lỗi hệ thống.' });
+
+        // SỬA CHỖ NÀY: user.securityAnswer (không gạch dưới)
+        if (user.securityAnswer && user.securityAnswer.toLowerCase() === answer.trim().toLowerCase()) {
+            
+            const sqlUpdate = "UPDATE Users SET password = ? WHERE id = ?";
+            db.run(sqlUpdate, [newPassword, user.id], (err) => {
+                if (err) return res.json({ success: false, message: 'Lỗi Update' });
+                res.json({ success: true, message: 'Đổi mật khẩu thành công!' });
+            });
+
+        } else {
+            res.json({ success: false, message: 'Câu trả lời không đúng!' });
+        }
+    });
+});
+
+// --- API LƯU ĐƠN HÀNG  ---
+app.post('/checkout', (req, res) => {
+    const { user_id, customer_name, phone, address, items, total_price } = req.body;
+    const itemsString = JSON.stringify(items); 
+    const sql = `INSERT INTO Orders (user_id, customer_name, phone, address, items, total_price, status) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const status = 'Đang xử lý';
+    db.run(sql, [user_id, customer_name, phone, address, itemsString, total_price, status], function(err) {
+        if (err) {
+            console.error("Lỗi lưu đơn hàng:", err.message);
+            return res.json({ success: false, message: 'Lỗi lưu đơn hàng' });
+        }
+        res.json({ success: true, message: 'Đặt hàng thành công!', orderId: this.lastID });
+    });
+});
+
+// --- API LẤY LỊCH SỬ  ---
+app.get('/my-orders/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const sql = "SELECT * FROM Orders WHERE user_id = ? ORDER BY id DESC";
+    db.all(sql, [userId], (err, rows) => {
+        if (err) {
+            console.error(err);
+            return res.json({ success: false, message: 'Lỗi lấy dữ liệu' });
+        }
+        res.json({ success: true, orders: rows });
     });
 });
 

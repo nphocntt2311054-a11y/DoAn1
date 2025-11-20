@@ -22,15 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                messageEl.textContent = 'Đăng nhập thành công! Đang chuyển về trang chủ...';
-                messageEl.style.color = 'green';
-
-                // Chờ 1.5 giây rồi chuyển về trang chủ
-                setTimeout(() => {
-                    window.location.href = 'trangchu.html'; // Hoặc trang 'trangchu.html' của bạn
-                }, 1500);
+               if (result.user) {
+                    localStorage.setItem('currentUser', JSON.stringify(result.user));
+                    alert('Đăng nhập thành công!');
+                    window.location.href = 'trangchu.html';
+                } else {
+                    console.error("Lỗi: Server báo thành công nhưng không trả về User!", result);
+                     alert('Lỗi hệ thống: Đăng nhập thành công nhưng không lấy được thông tin!');
+                }
             } else {
-                messageEl.textContent = result.message; // Hiển thị lỗi (VD: Sai mật khẩu)
+                messageEl.textContent = result.message; 
                 messageEl.style.color = 'red';
             }
 

@@ -1,136 +1,112 @@
+// frontend/common.js - PHIÊN BẢN CHUẨN
 
-// File này chứa những tính năng dùng chung cho TOÀN BỘ website
-
-// TÍNH NĂNG SỐ ĐIẾM TRONG GIỎ HÀNG
 document.addEventListener('DOMContentLoaded', () => {
-    updateCartCount(); // Tự động chạy ngay khi trang web tải xong
+    updateCartCount();
+    updateHeaderUser();
+    setupSearch();
 });
 
-// Hàm đếm số lượng trong giỏ hàng
+// 1. GIỎ HÀNG
 function updateCartCount() {
-    // 1. Tìm cái cục màu đỏ (dựa vào ID)
     const cartCountEl = document.getElementById('cart-count');
-    
-    // Nếu trang này không có icon giỏ hàng (ví dụ trang login) thì dừng lại
     if (!cartCountEl) return;
 
-    // 2. Lấy dữ liệu từ "ba-lô" (localStorage)
     const cart = JSON.parse(localStorage.getItem('shopping-cart')) || [];
+    const totalQuantity = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
     
-    // 3. Tính tổng số lượng
-    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-    
-    // 4. Hiển thị lên icon
     cartCountEl.textContent = totalQuantity;
     
     if (totalQuantity > 0) {    
-        cartCountEl.classList.remove('hidden'); // Hiện nếu có hàng
+        cartCountEl.classList.remove('hidden'); 
+        cartCountEl.style.display = 'flex';
     } else {
-        cartCountEl.classList.add('hidden');    // Ẩn nếu rỗng
+        cartCountEl.classList.add('hidden');    
+        cartCountEl.style.display = 'none';
     }
 }
 
-// frontend/common.js (KIỂM TRA LẠI PHẦN NÀY)
+// 2. TÀI KHOẢN
+function updateHeaderUser() {
+    const accountArea = document.getElementById('account-area');
+    let user = null;
 
-// Hàm render UI Đăng nhập/Đăng ký mặc định
-function renderDefaultAuthUI(placeholder) {
-    // KHI CHƯA ĐĂNG NHẬP: Hiển thị link Đăng nhập, Đăng ký VÀ Giỏ hàng
-    placeholder.innerHTML = `
-        <a href="login.html" class="flex items-center space-x-2 p-2 text-gray-700 hover:text-primary transition colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
-            <span class="hidden md:inline">Tài khoản</span>
-        </a>
-        <a href="cart.html" class="flex items-center space-x-2 relative p-2 text-gray-700 hover:text-primary transition colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-            <span class="hidden md:inline">Giỏ hàng</span>
-            <span id="cart-count" class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
-        </a>
-    `;
-}
-
-// Hàm Cập nhật giao diện Đăng nhập/Đăng xuất
-function checkAuthUI() {
-    const authPlaceholder = document.getElementById('auth-ui-placeholder');
-    const userString = localStorage.getItem('currentUser'); 
-
-    if (!authPlaceholder) return; 
-
-    if (userString) {
-        // ĐÃ ĐĂNG NHẬP: Hiển thị Avatar VÀ Giỏ hàng
-        try {
-            const user = JSON.parse(userString); 
-            const firstLetter = (user.username ? user.username[0] : 'U').toUpperCase();
-            
-            authPlaceholder.innerHTML = `
-                <div class="flex items-center space-x-4">
-                    
-                    <div class="relative">
-                        <div id="user-avatar" 
-                             class="w-8 h-8 bg-blue-500 text-white font-bold rounded-full flex items-center justify-center cursor-pointer text-sm"
-                             onclick="toggleUserMenu()">
-                            ${firstLetter}
-                        </div>
-                        
-                        <div id="user-menu" class="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
-                            <div class="block px-4 py-2 text-sm text-gray-700 border-b">Xin chào, ${user.username}</div>
-                            <button onclick="logout()" 
-                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                Đăng xuất
-                            </button>
-                        </div>
-                    </div>
-
-                    <a href="cart.html" class="flex items-center space-x-2 relative p-2 text-gray-700 hover:text-primary transition colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        <span class="hidden md:inline">Giỏ hàng</span>
-                        <span id="cart-count" class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
-                    </a>
-
-                </div>
-            `;
-            // Cần gán lại sự kiện click cho menu
-            const userMenu = document.getElementById('user-menu');
-            if (userMenu) {
-                window.toggleUserMenu = function() {
-                    userMenu.classList.toggle('hidden');
-                };
-            }
-
-        } catch (e) {
-            console.error("Lỗi parse currentUser:", e);
-            renderDefaultAuthUI(authPlaceholder);
+    // Xử lý lỗi dữ liệu rác (undefined)
+    try {
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser && storedUser !== "undefined") {
+            user = JSON.parse(storedUser);
         }
-
-    } else {
-        // Chưa đăng nhập -> Hiện UI mặc định (bao gồm Giỏ hàng)
-        renderDefaultAuthUI(authPlaceholder);
+    } catch (e) {
+        console.error("Lỗi dữ liệu user, reset...", e);
+        localStorage.removeItem('currentUser');
     }
-    // Sau khi nội dung được chèn, cần gọi lại updateCartCounter để hiển thị số lượng
-    window.updateCartCounter();
+
+    if (!accountArea) return;
+
+    if (user) {
+        // NẾU ĐÃ ĐĂNG NHẬP
+        const firstLetter = (user.username ? user.username[0] : 'U').toUpperCase();
+        
+        accountArea.innerHTML = `
+            <div class="relative group cursor-pointer z-50">
+                <div class="flex items-center gap-2 py-2">
+                    <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shadow-sm text-sm">
+                        ${firstLetter}
+                    </div>
+                    <span class="font-semibold text-gray-700 text-sm hidden md:inline truncate max-w-[120px]">
+                         ${user.username}
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+
+                <div class="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                    <div class="py-1">
+                        <div class="px-4 py-2 border-b border-gray-50 text-xs text-gray-400 uppercase font-bold">
+                            Tài khoản
+                        </div>
+                        <a href="history.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700">
+                        Lịch sử mua hàng</a>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <button onclick="handleLogout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">
+                            Đăng xuất
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        // NẾU CHƯA ĐĂNG NHẬP (Giữ nguyên nút cũ)
+        accountArea.innerHTML = `
+            <a href="login.html" class="flex items-center gap-2 text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <span class="hidden md:inline">Đăng nhập</span>
+            </a>
+        `;
+    }
 }
 
-// --- TÍNH NĂNG TÌM KIẾM ---
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('search-input');
+// 3. HÀM ĐĂNG XUẤT & TÌM KIẾM
+function handleLogout() {
+    if(confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+    }
+}
 
+function setupSearch() {
+    const searchInput = document.getElementById('search-input');
     if (searchInput) {
-        // Khi người dùng nhấn phím trong ô tìm kiếm
         searchInput.addEventListener('keypress', (e) => {
-            // Nếu phím nhấn là Enter (Mã 13)
             if (e.key === 'Enter') {
-                const keyword = searchInput.value.trim(); // Lấy chữ người dùng gõ
+                const keyword = searchInput.value.trim();
                 if (keyword) {
-                    // Chuyển hướng sang trang tìm kiếm với từ khóa
-                    // Ví dụ: search.html?q=harry
                     window.location.href = `search.html?q=${encodeURIComponent(keyword)}`;
                 }
             }
         });
     }
-});
+}
