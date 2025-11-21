@@ -178,14 +178,22 @@ app.get('/books/:id', (req, res) => {
     });
 });
 
-// API THÊM SÁCH MỚI
+// API THÊM SÁCH MỚI (Đã bổ sung xử lý position)
 app.post('/books', (req, res) => {
-    const { title, author, category, price, description, imageUrl, stock } = req.body;
-    const sql = `INSERT INTO Books (title, author, category, price, description, imageUrl, stock) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    // 1. Lấy thêm biến 'position' từ dữ liệu gửi lên
+    const { title, author, category, price, description, imageUrl, stock, position } = req.body;
+
+    // 2. Bổ sung 'position' vào câu lệnh SQL
+    const sql = `INSERT INTO Books (title, author, category, price, description, imageUrl, stock, position) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    // Xử lý dữ liệu đầu vào cho an toàn
     const stockValue = stock ? parseInt(stock) : 1;
-    db.run(sql, [title, author, category, price, description, imageUrl, stockValue], function(err) {
+    const positionValue = position || 'new'; // Nếu không chọn gì thì mặc định là 'new'
+
+    db.run(sql, [title, author, category, price, description, imageUrl, stockValue, positionValue], function(err) {
         if (err) {
+            console.error("Lỗi thêm sách:", err.message);
             return res.json({ success: false, message: err.message });
         }
         res.json({ success: true, message: 'Thêm sách thành công!', id: this.lastID });
@@ -249,7 +257,7 @@ app.post('/order', (req, res) => {
     });
 });
 
-// --- 1. API LẤY CÂU HỎI BẢO MẬT ---
+// --- . API LẤY CÂU HỎI BẢO MẬT ---
 app.get('/get-security-question/:username', (req, res) => {
     const username = req.params.username;
     const sql = "SELECT securityQuestion FROM Users WHERE username = ?";
@@ -321,7 +329,84 @@ app.get('/my-orders/:userId', (req, res) => {
     });
 });
 
-// 6. KHỞI ĐỘNG MÁY CHỦ
+// --- . API LẤY DANH SÁCH TẤT CẢ USER ---
+app.get('/users', checkAdmin, (req, res) => {
+    // Chỉ lấy id, username, isAdmin. 
+    // TUYỆT ĐỐI KHÔNG lấy password gửi về frontend nhé!
+    const sql = "SELECT id, username, isAdmin FROM Users ORDER BY id DESC";
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Lỗi server.' });
+        }
+        res.json({ success: true, users: rows });
+    });
+});
+
+// ---  API XÓA USER ---
+app.delete('/users/:id', checkAdmin, (req, res) => {
+    const idToDelete = req.params.id;
+    const currentAdminId = req.session.user.id; // ID của người đang đăng nhập
+
+    // CHẶN: Không cho phép Admin tự xóa chính mình
+    if (parseInt(idToDelete) === parseInt(currentAdminId)) {
+        return res.status(400).json({ success: false, message: 'Bạn không thể tự xóa tài khoản của chính mình!' });
+    }
+
+    const sql = "DELETE FROM Users WHERE id = ?";
+    db.run(sql, [idToDelete], function(err) {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Lỗi server.' });
+        }
+        res.json({ success: true, message: 'Đã xóa người dùng thành công.' });
+    });
+});
+
+// --- API THAY ĐỔI QUYỀN 
+app.put('/users/role/:id', checkAdmin, (req, res) => {
+    const targetId = req.params.id;
+    const { isAdmin } = req.body; // Nhận vào 1 (Admin) hoặc 0 (Khách)
+    const currentAdminId = req.session.user.id;
+
+    //  CHẶN: Không cho phép tự giáng chức chính mình
+    if (parseInt(targetId) === parseInt(currentAdminId)) {
+        return res.status(400).json({ success: false, message: 'Bạn không thể tự thay đổi quyền của chính mình!' });
+    }
+
+    const sql = "UPDATE Users SET isAdmin = ? WHERE id = ?";
+    db.run(sql, [isAdmin, targetId], function(err) {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Lỗi server.' });
+        }
+        res.json({ success: true, message: 'Cập nhật quyền thành công!' });
+    });
+});
+
+// ---  API LẤY TOÀN BỘ ĐƠN HÀNG (Dành cho Admin) ---
+app.get('/admin/orders', checkAdmin, (req, res) => {
+    // Lấy đơn mới nhất lên đầu (ORDER BY id DESC)
+    const sql = "SELECT * FROM Orders ORDER BY id DESC";
+    
+    db.all(sql, [], (err, rows) => {
+        if (err) return res.status(500).json({ success: false, message: 'Lỗi server' });
+        res.json({ success: true, orders: rows });
+    });
+});
+
+// ---  API CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG ---
+app.put('/admin/orders/:id', checkAdmin, (req, res) => {
+    const orderId = req.params.id;
+    const { status } = req.body; // Ví dụ: "Đã giao", "Đã hủy"
+
+    const sql = "UPDATE Orders SET status = ? WHERE id = ?";
+    db.run(sql, [status, orderId], function(err) {
+        if (err) return res.status(500).json({ success: false, message: 'Lỗi update status' });
+        res.json({ success: true, message: 'Cập nhật trạng thái thành công!' });
+    });
+});
+
+// . KHỞI ĐỘNG MÁY CHỦ
 app.listen(PORT, () => {
     console.log(`Máy chủ đang chạy tại http://localhost:${PORT}`);
 });
+
