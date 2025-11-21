@@ -48,7 +48,7 @@ function updateHeaderUser() {
         const firstLetter = (user.username ? user.username[0] : 'U').toUpperCase();
         
         accountArea.innerHTML = `
-            <div class="relative group cursor-pointer z-50">
+            <div class="relative group cursor-pointer z-[1000]">
                 <div class="flex items-center gap-2 py-2">
                     <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shadow-sm text-sm">
                         ${firstLetter}
@@ -61,7 +61,7 @@ function updateHeaderUser() {
                     </svg>
                 </div>
 
-                <div class="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                <div class="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-100 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right z-[1000]">
                     <div class="py-1">
                         <div class="px-4 py-2 border-b border-gray-50 text-xs text-gray-400 uppercase font-bold">
                             Tài khoản

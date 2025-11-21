@@ -178,28 +178,30 @@ app.get('/books/:id', (req, res) => {
     });
 });
 
-// --- API thêm sách mới (Chỉ Admin mới được thêm) ---
+// API THÊM SÁCH MỚI
 app.post('/books', (req, res) => {
-    console.log("Đang nhận yêu cầu thêm sách:", req.body); // 1. In ra để kiểm tra
-    const { title, author, price, image, category, position, description } = req.body;
-    const sql = "INSERT INTO Books (title, author, price, imageUrl, category, position, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    const params = [
-        title, 
-        author, 
-        price, 
-        image, 
-        category, 
-        position || 'new', 
-        description || ''
-    ];
-
-    db.run(sql, params, function(err) {
+    const { title, author, category, price, description, imageUrl, stock } = req.body;
+    const sql = `INSERT INTO Books (title, author, category, price, description, imageUrl, stock) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const stockValue = stock ? parseInt(stock) : 1;
+    db.run(sql, [title, author, category, price, description, imageUrl, stockValue], function(err) {
         if (err) {
-            console.error("Lỗi SQL:", err.message); // 2. In lỗi SQL nếu có
-            return res.status(400).json({ success: false, message: "Lỗi thêm sách: " + err.message });
+            return res.json({ success: false, message: err.message });
         }
-        console.log("Thêm sách thành công, ID:", this.lastID);
-        res.json({ success: true, id: this.lastID });
+        res.json({ success: true, message: 'Thêm sách thành công!', id: this.lastID });
+    });
+});
+
+// API CẬP NHẬT SÁCH 
+app.put('/books/:id', (req, res) => {
+    const { title, author, category, price, description, imageUrl, stock } = req.body;
+    const { id } = req.params;
+
+    const sql = `UPDATE Books SET title = ?, author = ?, category = ?, price = ?, description = ?, imageUrl = ?, stock = ? WHERE id = ?`;
+
+    db.run(sql, [title, author, category, price, description, imageUrl, stock, id], function(err) {
+        if (err) return res.json({ success: false, message: err.message });
+        res.json({ success: true, message: 'Cập nhật thành công!' });
     });
 });
 
@@ -269,20 +271,23 @@ app.post('/reset-password', (req, res) => {
     const { username, answer, newPassword } = req.body;
 
     const sqlGet = "SELECT * FROM Users WHERE username = ?";
-    db.get(sqlGet, [username], (err, user) => {
-        if (err || !user) return res.json({ success: false, message: 'Lỗi hệ thống.' });
-
-        // SỬA CHỖ NÀY: user.securityAnswer (không gạch dưới)
+    db.get(sqlGet, [username], async (err, user) => {
+        if (err || !user) return res.json({ success: false, message: 'Lỗi hệ thống hoặc sai tên đăng nhập.' });
         if (user.securityAnswer && user.securityAnswer.toLowerCase() === answer.trim().toLowerCase()) {
-            
-            const sqlUpdate = "UPDATE Users SET password = ? WHERE id = ?";
-            db.run(sqlUpdate, [newPassword, user.id], (err) => {
-                if (err) return res.json({ success: false, message: 'Lỗi Update' });
-                res.json({ success: true, message: 'Đổi mật khẩu thành công!' });
-            });
+            try {
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+                const sqlUpdate = "UPDATE Users SET password = ? WHERE id = ?";
+                db.run(sqlUpdate, [hashedPassword, user.id], (err) => {
+                    if (err) return res.json({ success: false, message: 'Lỗi Update DB' });
+                    res.json({ success: true, message: 'Đổi mật khẩu thành công!' });
+                });
+
+            } catch (error) {
+                res.status(500).json({ success: false, message: 'Lỗi mã hóa mật khẩu.' });
+            }
 
         } else {
-            res.json({ success: false, message: 'Câu trả lời không đúng!' });
+            res.json({ success: false, message: 'Câu trả lời bảo mật không đúng!' });
         }
     });
 });

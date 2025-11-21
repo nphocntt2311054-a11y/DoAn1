@@ -1,4 +1,4 @@
-// frontend/admin.js (PHIÊN BẢN 3 - HOÀN CHỈNH)
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- PHẦN 1: KHAI BÁO CÁC NÚT TABS ---
     const tabBooksBtn = document.getElementById('tab-books');
@@ -76,25 +76,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- HÀM 3: GỬI FORM THÊM SÁCH (ĐÃ SỬA LỖI) ---
+    // --- HÀM 3: GỬI FORM THÊM SÁCH 
     addBookForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
+        
+        // Lấy giá trị từ các ô input
+        const titleInput = document.getElementById('title');
+        const authorInput = document.getElementById('author');
+        const categoryInput = document.getElementById('category');
+        const priceInput = document.getElementById('price');
+        const stockInput = document.getElementById('stock'); 
+        const imageInput = document.getElementById('imageUrl');
+        const descInput = document.getElementById('description');
+
         const book = {
-            title: document.getElementById('title').value,
-            author: document.getElementById('author').value,
-            category: document.getElementById('category').value,
-            price: parseFloat(document.getElementById('price').value),
-            // stock: parseInt(document.getElementById('stock').value), // Tạm thời backend chưa lưu stock, cứ để đây
-            
-            // SỬA LỖI 2: Đổi 'imageUrl' thành 'image' cho khớp với Backend
-            image: document.getElementById('imageUrl').value, 
-            
-            description: document.getElementById('description').value,
-            position: document.getElementById('book-position').value 
+            title: titleInput.value,
+            author: authorInput.value,
+            category: categoryInput.value,
+            price: parseFloat(priceInput.value),
+            stock: stockInput ? parseInt(stockInput.value) : 1, 
+            imageUrl: imageInput.value, 
+            description: descInput.value,
         };
 
         try {
-            // SỬA LỖI 1: Đổi '/add-book' thành '/books'
             const response = await fetch('http://127.0.0.1:3000/books', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -106,17 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (result.success) {
                 messageEl.textContent = 'Thêm sách thành công!';
-                messageEl.style.color = 'green';
-                addBookForm.reset(); 
-                loadBooks(); 
+                messageEl.className = 'text-center mb-4 font-bold text-emerald-600';
+                
+                addBookForm.reset(); // Xóa trắng form
+                loadBooks(); // Tải lại danh sách ngay lập tức
             } else {
                 messageEl.textContent = 'Lỗi: ' + result.message;
-                messageEl.style.color = 'red';
+                messageEl.className = 'text-center mb-4 font-bold text-red-600';
             }
         } catch (error) {
-            console.error(error); // In lỗi ra console để dễ xem
-            messageEl.textContent = 'Lỗi kết nối (Kiểm tra lại Server).';
-            messageEl.style.color = 'red';
+            console.error(error);
+            messageEl.textContent = 'Lỗi kết nối Server.';
+            messageEl.className = 'text-center mb-4 font-bold text-red-600';
         }
     });
 

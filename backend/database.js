@@ -50,7 +50,7 @@ const db = new sqlite3.Database('./online-book.db', (err) => {
                  )  
             `);
 
-            console.log(" Các bảng CSDL đã được kiểm tra/khởi tạo.");
+            console.log(" Các bảng CSDL đã được kết nối");
         });
     }
 });
