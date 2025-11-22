@@ -37,12 +37,6 @@
       .bg-primary {
         background-color: #ca462a;
       }
-      .focus\:ring-primary:focus {
-        --tw-ring-color: #ca462a;
-      }
-      .hover\:text-primary:hover {
-        color: #ca462a;
-      }
     </style>
   </head>
   <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
@@ -158,18 +152,34 @@
         </div>
       </section>
 
-      <section class="container mx-auto px-4 py-16">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <section class="container mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start mb-16">
           <div>
             <h2 class="text-3xl font-bold mb-6 text-gray-800">
               Chào mừng đến với <span class="text-primary">BookNè</span>
             </h2>
-            <p class="text-gray-600 mb-4 leading-relaxed text-justify">
-              BookNè là dự án tâm huyết của nhóm sinh viên chúng tôi, ra đời với
-              sứ mệnh mang những cuốn sách giá trị đến gần hơn với độc giả trẻ.
-              Chúng tôi tin rằng, mỗi cuốn sách là một cánh cửa mở ra thế giới
-              mới.
-            </p>
+            <div class="text-gray-600 mb-4 leading-relaxed text-justify">
+              <p class="mb-3">
+                Chào mừng bạn đến với BookNè — nơi hội tụ đam mê đọc sách và tri
+                thức. Tại BookNè, chúng tôi tin rằng mỗi cuốn sách là một hành
+                trình. Chúng tôi xây dựng nền tảng này với sứ mệnh mang đến cho
+                cộng đồng độc giả những đầu sách giá trị, từ kinh điển đến hiện
+                đại.
+              </p>
+              <p class="font-bold text-gray-800 mt-4">Giá trị cốt lõi:</p>
+              <ul class="list-disc list-inside pl-2 space-y-1">
+                <li>Chất lượng: Hợp tác với NXB uy tín.</li>
+                <li>Bản quyền: Tôn trọng quyền tác giả.</li>
+                <li>Cộng đồng: Khuyến khích chia sẻ review.</li>
+              </ul>
+              
+              <p class="font-bold text-gray-800 mt-4">Tính năng nổi bật:</p>
+              <ul class="list-disc list-inside pl-2 space-y-1">
+                <li>Tìm kiếm thông minh.</li>
+                <li>Đề xuất cá nhân hóa.</li>
+              </ul>
+            </div>
+
             <div class="grid grid-cols-2 gap-4 mt-8">
               <div class="flex items-center gap-3">
                 <i class="fas fa-check-circle text-primary text-xl"></i>
@@ -181,6 +191,7 @@
               </div>
             </div>
           </div>
+          
           <div class="relative">
             <img
               src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
@@ -189,44 +200,32 @@
             />
           </div>
         </div>
-      </section>
 
-      <section class="bg-orange-50 py-16">
-        <div class="container mx-auto px-4 text-center">
-          <h2 class="text-3xl font-bold text-gray-800 mb-12">
-            Đội Ngũ Của Chúng Tôi
-          </h2>
-          <div class="flex flex-wrap justify-center gap-8">
-            <div
-              class="bg-white p-6 rounded-lg shadow-md w-64 hover:-translate-y-2 transition duration-300"
-            >
-              <div
-                class="w-24 h-24 mx-auto bg-gray-200 rounded-full mb-4 overflow-hidden"
-              >
-                <img
-                  src="https://ui-avatars.com/api/?name=A&background=random"
-                  alt="User"
-                  class="w-full h-full object-cover"
-                />
-              </div>
-              <h3 class="font-bold text-lg">Nguyễn Văn A</h3>
-              <p class="text-primary text-sm">Fullstack Dev</p>
-            </div>
-            <div
-              class="bg-white p-6 rounded-lg shadow-md w-64 hover:-translate-y-2 transition duration-300"
-            >
-              <div
-                class="w-24 h-24 mx-auto bg-gray-200 rounded-full mb-4 overflow-hidden"
-              >
-                <img
-                  src="https://ui-avatars.com/api/?name=B&background=random"
-                  alt="User"
-                  class="w-full h-full object-cover"
-                />
-              </div>
-              <h3 class="font-bold text-lg">Trần Thị B</h3>
-              <p class="text-primary text-sm">Frontend Dev</p>
-            </div>
+        <hr class="border-gray-200 my-12" />
+
+        <div class="w-full text-left">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Thông tin về công ty</h2>
+
+          <div class="mb-8 text-gray-700 space-y-2">
+            <p>- Công ty TNHH BookNè</p>
+            <p>- Địa chỉ đăng ký kinh doanh: Tòa Nhà Viettel, Số 285, Đường Cách Mạng Tháng 8 - Phường 12 - Quận 10 - TP Hồ Chí Minh - Việt Nam.</p>
+            <p>- Giấy chứng nhận Đăng ký Kinh doanh số 0309532909 do Sở Kế hoạch và Đầu tư Thành phố Hồ Chí Minh cấp ngày 06/01/2010</p>
+          </div>
+
+          <p class="mb-6 text-gray-600 italic">
+            Quý khách có nhu cầu liên lạc, trao đổi hoặc đóng góp ý kiến, vui lòng tham khảo các thông tin sau:
+          </p>
+
+          <div class="mb-8 text-gray-700 space-y-2">
+            <p>- Liên lạc qua điện thoại: <span class="font-semibold">1900 6035</span></p>
+            <p>- Liên lạc qua email: <a href="mailto:support@bookworld.vn" class="text-blue-600 hover:underline">support@bookworld.vn</a></p>
+            <p>- Fanpage của BookNè: <a href="https://www.facebook.com/huynh.huu.thang.743585" target="_blank" class="text-blue-600 hover:underline">fb.com/bookworld</a></p>
+            <p>- Đối tác hợp tác quảng cáo: <a href="tel:19001234" class="text-blue-600 hover:underline">1900 1234</a></p>
+          </div>
+
+          <div class="text-gray-700 space-y-2">
+            <p>- Văn phòng chính: Tòa nhà Viettel, 285 Cách Mạng Tháng 8, Phường 12, Quận 10, Thành phố Hồ Chí Minh.</p>
+            <p>- Văn phòng: 52 Út Tịch, Phường 4, Quận Tân Bình, Thành Phố Hồ Chí Minh.</p>
           </div>
         </div>
       </section>
@@ -238,41 +237,15 @@
           <div>
             <h4 class="text-lg font-semibold text-white mb-4">Tin Tức</h4>
             <ul class="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-400 hover:text-white transition-colors"
-                  >Tin Tức</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-400 hover:text-white transition-colors"
-                  >Giới thiệu</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-400 hover:text-white transition-colors"
-                  >Sự kiện</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-400 hover:text-white transition-colors"
-                  >Khuyến mãi</a
-                >
-              </li>
+              <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Tin Tức</a></li>
+              <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Giới thiệu</a></li>
+              <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Sự kiện</a></li>
+              <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Khuyến mãi</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 class="text-lg font-semibold text-white mb-4">
-              Hỗ trợ khách hàng
-            </h4>
+            <h4 class="text-lg font-semibold text-white mb-4">Hỗ trợ khách hàng</h4>
             <ul class="space-y-3">
               <li class="text-sm text-gray-400">Hotline: 1900 1234</li>
               <li class="text-sm text-gray-400">Facebook: fb.com/bookworld</li>
@@ -282,31 +255,11 @@
           </div>
 
           <div>
-            <h4 class="text-lg font-semibold text-white mb-4">
-              Tài khoản của tôi
-            </h4>
+            <h4 class="text-lg font-semibold text-white mb-4">Tài khoản của tôi</h4>
             <ul class="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-400 hover:text-white transition-colors"
-                  >Đăng ký</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-400 hover:text-white transition-colors"
-                  >Đăng nhập</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-400 hover:text-white transition-colors"
-                  >Lịch sử mua hàng</a
-                >
-              </li>
+              <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Đăng ký</a></li>
+              <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Đăng nhập</a></li>
+              <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Lịch sử mua hàng</a></li>
             </ul>
           </div>
         </div>
@@ -318,5 +271,7 @@
         </div>
       </div>
     </footer>
+    <script src="trangchu.js"></script>
+    <script src="common.js"></script>
   </body>
 </html>
