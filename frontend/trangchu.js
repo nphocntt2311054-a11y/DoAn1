@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Gọi API lấy sách
-            const response = await fetch('http://127.0.0.1:3000/books', { credentials: 'include' });
+            const response = await fetch('http://127.0.0.1:3000/books');
             const data = await response.json();
 
             if (data.success && data.books.length > 0) {
