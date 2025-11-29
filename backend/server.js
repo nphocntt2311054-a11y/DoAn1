@@ -1,3 +1,4 @@
+
 // 1. GỌI TẤT CẢ THƯ VIỆN LÊN ĐẦU
 const express = require('express');
 const cors = require('cors');
@@ -12,8 +13,9 @@ const saltRounds = 10; // Dùng cho mã hóa
 
 // 3. SỬ DỤNG MIDDLEWARE (Cấu hình)
 app.use(cors({
-    origin: 'http://127.0.0.1:5501', // Cho phép Live Server (frontend) gọi
-    credentials: true                   // Cho phép nhận "thẻ VIP"
+    // Cho phép Frontend (cổng 5501 hoặc 5502) truy cập
+    origin: ['http://127.0.0.1:5501', 'http://127.0.0.1:5502', 'http://localhost:5501', 'http://localhost:5502'],
+    credentials: true // Cho phép gửi cookie/session
 }));
 app.use(express.json()); // Đọc được JSON
 
