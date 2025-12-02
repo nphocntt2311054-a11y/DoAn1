@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadAllBooks() {
         // Hiện thông báo đang tải
         if (featuredList) featuredList.innerHTML = '<p class="col-span-full text-center">Đang tải...</p>';
-        if (newList) newList.innerHTML = '<p class="col-span-full text-center">Đang tải...</p>';
+        if (newList) newList.innerHTML = '<p class="col-span-full text-cen ter">Đang tải...</p>';
         if (suggestedList) suggestedList.innerHTML = '<p class="col-span-full text-center">Đang tải...</p>';
 
         try {
