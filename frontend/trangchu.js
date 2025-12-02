@@ -76,12 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadAllBooks() {
         // Hiện thông báo đang tải
         if (featuredList) featuredList.innerHTML = '<p class="col-span-full text-center">Đang tải...</p>';
-        if (newList) newList.innerHTML = '<p class="col-span-full text-center">Đang tải...</p>';
+        if (newList) newList.innerHTML = '<p class="col-span-full text-cen ter">Đang tải...</p>';
         if (suggestedList) suggestedList.innerHTML = '<p class="col-span-full text-center">Đang tải...</p>';
 
         try {
             // Gọi API lấy sách
-            const response = await fetch('http://127.0.0.1:3000/books', { credentials: 'include' });
+            const response = await fetch('http://127.0.0.1:3000/books');
             const data = await response.json();
 
             if (data.success && data.books.length > 0) {
