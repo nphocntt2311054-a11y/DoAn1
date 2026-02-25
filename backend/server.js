@@ -179,19 +179,15 @@ app.get('/books/:id', (req, res) => {
     });
 });
 
-// API THÊM SÁCH MỚI (Đã bổ sung xử lý position)
+// API THÊM SÁCH MỚI 
 app.post('/books', (req, res) => {
-    // 1. Lấy thêm biến 'position' từ dữ liệu gửi lên
     const { title, author, category, price, description, imageUrl, stock, position } = req.body;
 
-    // 2. Bổ sung 'position' vào câu lệnh SQL
     const sql = `INSERT INTO Books (title, author, category, price, description, imageUrl, stock, position) 
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    // Xử lý dữ liệu đầu vào cho an toàn
     const stockValue = stock ? parseInt(stock) : 1;
-    const positionValue = position || 'new'; // Nếu không chọn gì thì mặc định là 'new'
-
+    const positionValue = position || 'new';
     db.run(sql, [title, author, category, price, description, imageUrl, stockValue, positionValue], function(err) {
         if (err) {
             console.error("Lỗi thêm sách:", err.message);
