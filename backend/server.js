@@ -27,11 +27,10 @@ app.use(session({
     cookie: { secure: false } // Để 'false' nếu bạn dùng http, 'true' cho https
 }));
 
-// 4. "NGƯỜI GÁC CỔNG" (Middleware Tùy chỉnh)
+// 4. "NGƯỜI GÁC CỔNG"
 const checkAdmin = (req, res, next) => {
-    // Kiểm tra xem session có tồn tại, có user, và user.isAdmin == 1 không
     if (req.session.user && req.session.user.isAdmin === 1) {
-        next(); // Ok, là Admin, cho qua
+        next();
     } else {
         // Không phải Admin
         res.status(403).json({ success: false, message: 'Yêu cầu quyền Admin.' });
@@ -44,7 +43,7 @@ app.get('/', (req, res) => {
     res.send('Chào bạn, đây là Backend của Online Book!');
 });
 
-// --- API Về Xác thực (Auth) ---
+// --- API đăng kí  ---
 app.post('/register', async (req, res) => {
     const { username, password, securityQuestion, securityAnswer } = req.body;
 
@@ -369,8 +368,6 @@ app.put('/users/role/:id', checkAdmin, (req, res) => {
     const targetId = req.params.id;
     const { isAdmin } = req.body; // Nhận vào 1 (Admin) hoặc 0 (Khách)
     const currentAdminId = req.session.user.id;
-
-    //  CHẶN: Không cho phép tự giáng chức chính mình
     if (parseInt(targetId) === parseInt(currentAdminId)) {
         return res.status(400).json({ success: false, message: 'Bạn không thể tự thay đổi quyền của chính mình!' });
     }
