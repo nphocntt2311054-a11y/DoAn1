@@ -1,29 +1,28 @@
 // frontend/load-category.js
 
-// Hàm này nhận vào 2 thứ:
-// 1. categoryName: Tên danh mục muốn lấy (Phải khớp với Admin)
-// 2. elementId: ID của cái khung div trong HTML để vẽ sách vào
 async function loadBooksByCategory(categoryName, elementId) {
     const container = document.getElementById(elementId);
     
     if (!container) return; // Không tìm thấy khung thì thôi
 
-    container.innerHTML = '<p class="text-center col-span-full">Đang tải sách...</p>';
+    container.innerHTML = '<p class="text-center col-span-full">Đang tải sách từ MySQL...</p>';
 
     try {
-        // Gọi API kèm theo ?category=...
-        const response = await fetch(`http://127.0.0.1:3000/books?category=${encodeURIComponent(categoryName)}`);
+        // 1. GỌI API MỚI CỦA MÌNH
+        const response = await fetch(`http://localhost:3000/api/books?category=${encodeURIComponent(categoryName)}`);
         const data = await response.json();
 
-        if (data.success && data.books.length > 0) {
+        // 2. LẤY DỮ LIỆU TRỰC TIẾP
+        // Vì Backend mới của mình trả thẳng về 1 mảng sách, nên m chỉ cần check data.length là đủ
+        if (data && data.length > 0) {
             container.innerHTML = ''; // Xóa chữ đang tải
 
-            data.books.forEach(book => {
-                // Logic sửa ảnh
-                let imageUrl = book.imageUrl || 'https://placehold.co/300x450';
+            data.forEach(book => {
+                // 3. SỬA LẠI TÊN CỘT ẢNH CHO KHỚP MYSQL (image_url)
+                let imageUrl = book.image_url || 'https://placehold.co/300x450';
                 if (imageUrl.startsWith('frontend/')) imageUrl = imageUrl.replace('frontend/', '');
 
-                // Vẽ thẻ sách
+                // Khúc này T GIỮ NGUYÊN 100% HTML CỦA M, không đổi 1 chữ nào để giữ nguyên độ đẹp!
                 const html = `
                     <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition border flex flex-col h-full group">
                         <a href="detail.html?id=${book.id}" class="block h-72 w-full flex items-center justify-center p-4 overflow-hidden">
@@ -43,10 +42,10 @@ async function loadBooksByCategory(categoryName, elementId) {
                 container.innerHTML += html;
             });
         } else {
-            container.innerHTML = '<p class="text-center col-span-full text-gray-500">Chưa có sách nào trong danh mục này.</p>';
+            container.innerHTML = '<p class="text-center col-span-full text-gray-500">Chưa có sách nào trong kho MySQL.</p>';
         }
     } catch (error) {
         console.error(error);
-        container.innerHTML = '<p class="text-center col-span-full text-red-500">Lỗi kết nối Server.</p>';
+        container.innerHTML = '<p class="text-center col-span-full text-red-500">Lỗi kết nối Server. Nhớ bật node server.js lên m nhé!</p>';
     }
 }
