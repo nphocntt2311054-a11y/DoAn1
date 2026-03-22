@@ -15,7 +15,7 @@ app.listen(port, () => {
 
 // Lấy danh sách Sách (Có hỗ trợ lọc theo Danh mục)
 app.get('/api/books', (req, res) => {
-    const categoryName = req.query.category; // Lấy cái tên danh mục mà Frontend gửi lên
+    const cSategoryName = req.query.category; // Lấy cái tên danh mục mà Frontend gửi lên
 
     let sql = 'SELECT * FROM Books';
     let values = [];
