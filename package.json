@@ -3,5 +3,10 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "mysql2": "^3.20.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2"
   }
 }
