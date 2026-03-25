@@ -19,7 +19,7 @@ db.connect((err) => {
         console.error('Bị lỗi kết nối Database rồi m ơi: ', err);
         return;
     }
-    console.log('Ngon! Đã kết nối thành công với MySQL webbansach!');
+    console.log(' Đã kết nối thành công với MySQL webbansach!');
 });
 
 // 2. Tạo cái API (Lệnh để bốc 60 cuốn sách)
